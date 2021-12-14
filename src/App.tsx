@@ -3,14 +3,7 @@ import './App.css';
 import FlexBox from './UI/Layout/flexBox'
 import axios from 'axios';
 import HeroCard from './components/HeroCard/heroCard';
-
-interface Hero {
-  id: number;
-  modified: string;
-  name: string;
-  thumbnail: string;
-  appearences: string[];
-} 
+import {Hero} from './data/data';
 
 function HerosApp() {
 
@@ -23,7 +16,6 @@ function HerosApp() {
 
   const fetch = async () => {
     let response = await axios.get(`https://gateway.marvel.com:443/v1/public/characters?apikey=2ed8da3716ca94726cdfb4cf564ffe5c`)
-    console.log(response?.data?.data?.results);
     if(response?.data?.data?.results){
       setHeros(response.data.data.results.map( (item:any) =>  {
         return {
@@ -40,19 +32,13 @@ function HerosApp() {
   }
 
   useEffect(()=>{
-    console.log('heros:',heros);
-  },[heros])
-
-  useEffect(()=>{
     fetch()
   },[])
 
-  
   return (
     <div className="App">
       <input value={search} onChange={onSearch}/>
       search for: {search}
-
         {heros.length > 0 &&  <HeroCard hero={heros[0]}/> }
     
     </div>
