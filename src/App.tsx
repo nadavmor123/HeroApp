@@ -1,26 +1,62 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import FlexBox from './UI/Layout/flexBox'
+import axios from 'axios';
+import HeroCard from './components/HeroCard/heroCard';
 
-function App() {
+interface Hero {
+  id: number;
+  modified: string;
+  name: string;
+  thumbnail: string;
+  appearences: string[];
+} 
+
+function HerosApp() {
+
+  const [heros, setHeros] = useState<Hero[]>([]);
+  const [search, setSearch] = useState<string>('');
+
+  const onSearch = (e:any) => {
+      setSearch(e.target.value)
+  }
+
+  const fetch = async () => {
+    let response = await axios.get(`https://gateway.marvel.com:443/v1/public/characters?apikey=2ed8da3716ca94726cdfb4cf564ffe5c`)
+    console.log(response?.data?.data?.results);
+    if(response?.data?.data?.results){
+      setHeros(response.data.data.results.map( (item:any) =>  {
+        return {
+          id: item.id,
+          modified: item.modified,
+          name: item.name,
+          thumbnail: `${item.thumbnail.path}.${item.thumbnail.extension}`,
+          appearences: item.stories.items.map((story:any)=>{
+              return story.name;
+          })
+        } as Hero
+      }))
+    }
+  }
+
+  useEffect(()=>{
+    console.log('heros:',heros);
+  },[heros])
+
+  useEffect(()=>{
+    fetch()
+  },[])
+
+  
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <input value={search} onChange={onSearch}/>
+      search for: {search}
+
+        {heros.length > 0 &&  <HeroCard hero={heros[0]}/> }
+    
     </div>
   );
 }
 
-export default App;
+export default HerosApp;
