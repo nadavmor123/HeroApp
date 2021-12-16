@@ -3,5 +3,6 @@ export interface Hero {
     modified: string;
     name: string;
     thumbnail: string;
-    appearences: string[];
+    appearence: string;
+    publisher: string;
 } 

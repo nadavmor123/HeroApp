@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import FlexBox from './UI/Layout/flexBox'
 import axios from 'axios';
 import HeroCard from './components/HeroCard/heroCard';
+import { DataGrid } from '@mui/x-data-grid';
 import {Hero} from './data/data';
+
 
 function HerosApp() {
 
@@ -20,27 +21,60 @@ function HerosApp() {
       setHeros(response.data.data.results.map( (item:any) =>  {
         return {
           id: item.id,
-          modified: item.modified,
           name: item.name,
+          modified: item.modified,     
           thumbnail: `${item.thumbnail.path}.${item.thumbnail.extension}`,
-          appearences: item.stories.items.map((story:any)=>{
+          appearence: item.stories.items.map((story:any)=>{
               return story.name;
-          })
+          })[0],
+          publisher:'Marvel'
         } as Hero
       }))
     }
   }
 
+  const columns = [
+    { field: 'id', headerName: 'ID', width: 90 },
+    {
+      field: 'name',
+      headerName: 'Hero name',
+      width: 150,
+      editable: true,
+    },
+    {
+      field: 'modified',
+      headerName: 'Last Updated',
+      width: 150,
+      editable: true,
+    },
+    {
+      field: 'appearence',
+      headerName: 'First appearance',
+      width: 110,
+      editable: true,
+    },
+    {
+      field: 'publisher',
+      headerName: 'Publisher',
+      sortable: false,
+      width: 160,
+    },
+  ];
+  
   useEffect(()=>{
     fetch()
   },[])
 
   return (
-    <div className="App">
-      <input value={search} onChange={onSearch}/>
-      search for: {search}
-        {heros.length > 0 &&  <HeroCard hero={heros[0]}/> }
-    
+    <div className="App" style={{ height: 400, width: 800 }} >
+     <DataGrid
+        rows={heros}
+        columns={columns}
+        pageSize={5}
+        rowsPerPageOptions={[5]}
+        checkboxSelection={false}
+        disableSelectionOnClick
+      />
     </div>
   );
 }
