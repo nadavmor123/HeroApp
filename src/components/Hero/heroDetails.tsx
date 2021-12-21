@@ -1,5 +1,5 @@
 import React, {FC} from 'react';
-import {Hero} from '../../data/data';
+import {Hero} from '../../Data/data';
 import FlexBox from '../../UI/Layout/flexBox';
 import Image from '../../UI/Image/image';
 
@@ -7,7 +7,7 @@ interface props {
     hero?: Hero
 }
 
-const HeroCard: FC<props> = ({hero}) => {
+const HeroDetails: FC<props> = ({hero}) => {
   return hero ? (
       <FlexBox direction={'row'}>
           <FlexBox direction={'column'} stratch width={300} height={200} alignItems={'center'}>
@@ -21,4 +21,4 @@ const HeroCard: FC<props> = ({hero}) => {
   ) : null;
 }
 
-export default HeroCard;
+export default HeroDetails;
