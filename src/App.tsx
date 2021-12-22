@@ -2,16 +2,24 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import HeroDetails from './components/Hero/heroDetails';
 import { DataGrid } from '@mui/x-data-grid';
-import {Hero} from './Data/data';
+import {Hero, HeroResponse} from './Types/data';
 import useFetch from './AppLogic/Hooks/useFetch';
 import FlexBox from './UI/Layout/flexBox';
 import Card from './UI/Card/card';
 import Button from './UI/Button/button';
+import Image from './UI/Image/image';
+import {columns} from './gridConfig';
 
-
+const apiUrl = `https://gateway.marvel.com:443/v1/public/characters?apikey=2ed8da3716ca94726cdfb4cf564ffe5c`;
 function HerosApp() {
 
-  const {data,error,loading} = useFetch(`https://gateway.marvel.com:443/v1/public/characters?apikey=2ed8da3716ca94726cdfb4cf564ffe5c`)
+  const {data,error,loading} = useFetch<HeroResponse>(apiUrl,{
+    count: 0,
+    limit: 0,
+    offset: 0,
+    results:[],
+    total: 0
+  })
 
   const [heros, setHeros] = useState<Hero[]>([]);
   const [selectedHero, setSelectedHero] = useState<Hero>();
@@ -19,40 +27,19 @@ function HerosApp() {
   const [search, setSearch] = useState<string>('');
 
   const onSearch = (e:any) => {
+      setSelectedHero(undefined);
       setSearch(e.target.value)
-      let newHerose = heros.filter(hero=>{
-        return hero.name.includes(e.target.value)
-      });
-      setFilteredHeros(newHerose);
+      if(e.target.value === ''){
+        setFilteredHeros([])
+      }
   }
 
-  const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
-    {
-      field: 'name',
-      headerName: 'Hero name',
-      width: 150,
-      editable: true,
-    },
-    {
-      field: 'modified',
-      headerName: 'Last Updated',
-      width: 150,
-      editable: true,
-    },
-    {
-      field: 'appearence',
-      headerName: 'First appearance',
-      width: 110,
-      editable: true,
-    },
-    {
-      field: 'publisher',
-      headerName: 'Publisher',
-      sortable: false,
-      width: 160,
-    },
-  ];
+  const onSearchClick = () => {
+    let filteredHeros = heros.filter(hero=>{
+      return hero.name.includes(search)
+    });
+    setFilteredHeros(filteredHeros);
+  }
 
   const renderHeroList = () => {
     if(loading) return <>laoding...</>
@@ -61,20 +48,19 @@ function HerosApp() {
       <DataGrid
         rows={filteredHeros.length > 0 ? filteredHeros : heros}
         columns={columns}
-        pageSize={5}
-        rowsPerPageOptions={[5]}
+        pageSize={10}
+        rowsPerPageOptions={[10]}
         checkboxSelection={false}
         onRowClick={(params,e)=>{
-            console.log(params)
             setSelectedHero(params.row as Hero)
         }}
      />
     )
   }
-  
-  useEffect(()=>{
-    if(data.results.length > 0){
-      setHeros(data.results.map( (item:any) =>  {
+
+  const initilizeData = () => {
+    if(data && data.results.length > 0){
+      setHeros(data.results.map((item:any) =>  {
         return {
           id: item.id,
           name: item.name,
@@ -87,30 +73,44 @@ function HerosApp() {
         } as Hero
       }))
     }
+  }
+  
+  useEffect(()=>{
+    initilizeData();
   },[data])
 
   return (
-    <div className="App" >
-    
-      
-      <FlexBox justifyContent='center' alignItems='center'>
-        <FlexBox width={1000} height={400}>
+    <div className="App">
+      <FlexBox justifyContent='center' background='#E5E5E5' height={window.innerHeight}>
+        <FlexBox width={1000} height={460}>
           <Card header={
-            <FlexBox alignItems='center' justifyContent='center'>
-              <FlexBox height={46} width={480} direction='row'>
+            <FlexBox alignItems='center' justifyContent='center' background={'#EFEFF4'} height={100}>
+              <FlexBox width={480} direction='row' height={45}>
                 <FlexBox stratch>
                   <input style={{width:'100%'}} value={search} onChange={onSearch}/>
                 </FlexBox>
                 <FlexBox width={50}>
-                  <Button label='GO!' background={'#4310AE'} onClick={()=>console.log('search')}/>
+                  <Button label='GO!' background={'#4310AE'} onClick={onSearchClick}/>
                 </FlexBox>
               </FlexBox>
             </FlexBox>
-          }>
-              {selectedHero ?
-               <HeroDetails hero={selectedHero}></HeroDetails>:
-               renderHeroList()}
-          </Card>    
+          } body={
+            selectedHero ?
+            <FlexBox direction={'row'} 
+            paddingTop={40} 
+            paddingRight={40} 
+            paddingBottom={40} 
+            paddingLeft={40} 
+            background={'white'}>
+               <FlexBox width={400}>
+                 <Image src={selectedHero.thumbnail}/>
+              </FlexBox>
+              <FlexBox stratch>
+                 <HeroDetails hero={selectedHero}></HeroDetails>
+              </FlexBox>
+            </FlexBox> :
+              renderHeroList() 
+          } />
         </FlexBox>
       </FlexBox>
     </div>

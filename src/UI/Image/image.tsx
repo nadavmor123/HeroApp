@@ -9,7 +9,7 @@ const Image: FC<props> = ({src}) => {
     <img src={src} style={{
         width: '100%',
         height: '100%',
-        objectFit: 'contain',
+        objectFit: 'cover',
         overflow: 'hidden'
     }}/>
   );

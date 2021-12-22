@@ -1,15 +1,9 @@
 import React, {useState, useEffect} from "react";
 import axios from 'axios';
-import { HeroResponse } from "../../Data/data";
 
-const useFetch = (url:string) => { 
-    const [data, setData] = useState<HeroResponse>({
-        count: 0,
-        limit: 0,
-        offset: 0,
-        results: [],
-        total: 0
-    });
+const useFetch = <T>(url:string, initialValue:T) => { 
+    
+    const [data, setData] = useState<T>(initialValue);
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -21,7 +15,7 @@ const useFetch = (url:string) => {
                 setData(response.data.data);
             }
         })
-        .catch(err=>{   
+        .catch(()=>{   
              setError(true);   
         })
     },[url])

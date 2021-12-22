@@ -1,5 +1,5 @@
 import React, {FC, ReactNode} from 'react';
-import { buttonTheme } from '../../Data/themes';
+import { buttonTheme } from '../../Types/themes';
 
 interface props {
     onClick: () => void;

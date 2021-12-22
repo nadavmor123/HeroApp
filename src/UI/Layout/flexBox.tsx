@@ -1,5 +1,5 @@
 import React, {FC} from 'react';
-import { backgroundTheme } from '../../Data/themes';
+import { backgroundTheme } from '../../Types/themes';
 
 interface props {
     children: React.ReactNode;
@@ -10,14 +10,31 @@ interface props {
     justifyContent?: 'center' | 'flex-start' | 'flex-end';
     stratch?: boolean; 
     background?: backgroundTheme;
+    paddingLeft?: number;
+    paddingRight?: number;
+    paddingTop?: number;
+    paddingBottom?: number;
 }
 
-const FlexBox: FC<props> = ({children, width, height, direction, alignItems, justifyContent, stratch, background}) => {
+const FlexBox: FC<props> = ({
+    children, 
+    paddingLeft,
+    paddingRight,
+    paddingBottom,
+    paddingTop,
+    width, 
+    height, 
+    direction, 
+    alignItems, 
+    justifyContent, 
+    stratch, 
+    background}) => {
   return (
     <div style={{
         display:'flex',
         width: width || '100%',
         flexDirection: direction,
+        padding: `${paddingTop || 0}px ${paddingRight || 0}px ${paddingBottom || 0}px ${paddingLeft || 0}px`,
         height: height || '100%',
         alignItems: alignItems,
         justifyContent: justifyContent,
