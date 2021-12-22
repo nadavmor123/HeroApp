@@ -9,8 +9,10 @@ import Card from './UI/Card/card';
 import Button from './UI/Button/button';
 import Image from './UI/Image/image';
 import {columns} from './gridConfig';
+import {dummyHeros} from './AppLogic/Mock/Heros';
 
 const apiUrl = `https://gateway.marvel.com:443/v1/public/characters?apikey=2ed8da3716ca94726cdfb4cf564ffe5c`;
+
 function HerosApp() {
 
   const {data,error,loading} = useFetch<HeroResponse>(apiUrl,{
@@ -26,7 +28,7 @@ function HerosApp() {
   const [filteredHeros, setFilteredHeros] = useState<Hero[]>([]);
   const [search, setSearch] = useState<string>('');
 
-  const onSearch = (e:any) => {
+  const onSearchChange = (e:any) => {
       setSelectedHero(undefined);
       setSearch(e.target.value)
       if(e.target.value === ''){
@@ -42,8 +44,13 @@ function HerosApp() {
   }
 
   const renderHeroList = () => {
-    if(loading) return <>laoding...</>
-    if(error) return <>error...</>
+    if (loading) {
+      return (
+        <FlexBox alignItems='center' justifyContent='center'>
+          laoding...
+         </FlexBox>
+        )
+    } 
     return (
       <DataGrid
         rows={filteredHeros.length > 0 ? filteredHeros : heros}
@@ -72,6 +79,11 @@ function HerosApp() {
           publisher:'Marvel'
         } as Hero
       }))
+    }else{
+      /* this was done in order to prevent the 
+      hustle of configuring all the marvel api and 
+      CORS demands - you welcome! */
+      setHeros(dummyHeros);
     }
   }
   
@@ -81,13 +93,18 @@ function HerosApp() {
 
   return (
     <div className="App">
-      <FlexBox justifyContent='center' background='#E5E5E5' height={window.innerHeight}>
+      <FlexBox background={'#E5E5E5'}  justifyContent={'center'} alignItems={'center'}>
+        <FlexBox width={200} paddingTop={40}>
+             <Image src={'/images/icon.png'}></Image>
+        </FlexBox>
+        </FlexBox>
+      <FlexBox justifyContent={'center'} background={'#E5E5E5'} height={window.innerHeight}>
         <FlexBox width={1000} height={460}>
           <Card header={
-            <FlexBox alignItems='center' justifyContent='center' background={'#EFEFF4'} height={100}>
+            <FlexBox alignItems='center' justifyContent={'center'} background={'#EFEFF4'} height={100}>
               <FlexBox width={480} direction='row' height={45}>
                 <FlexBox stratch>
-                  <input style={{width:'100%'}} value={search} onChange={onSearch}/>
+                  <input style={{width:'100%'}} value={search} onChange={onSearchChange}/>
                 </FlexBox>
                 <FlexBox width={50}>
                   <Button label='GO!' background={'#4310AE'} onClick={onSearchClick}/>

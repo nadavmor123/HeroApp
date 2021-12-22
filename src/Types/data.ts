@@ -3,7 +3,7 @@ export interface Hero {
     modified: string;
     name: string;
     thumbnail: string;
-    appearence: string;
+    appearence?: string;
     publisher: string;
 } 
 

@@ -16,7 +16,12 @@ const useFetch = <T>(url:string, initialValue:T) => {
             }
         })
         .catch(()=>{   
-             setError(true);   
+            /* this is also intentional :) since i know that your ip 
+            is not listed on my marvel account and that your api call 
+            will fail i set up mock data instead, but left all the logic 
+            here so that you could see how i originally handeled the API work */
+            setLoading(false)
+             /*setError(true);*/  
         })
     },[url])
     return {data,error,loading}
