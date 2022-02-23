@@ -3,18 +3,21 @@ import { headerTheme } from '../../Types/themes';
 
 interface props {
     text: string;
-    size: number;
-    color: headerTheme;
+    size?: number;
+    color?: headerTheme;
     bold?: boolean;
+    lineHeight?: number;
 }
 
-const Text: FC<props> = ({text,color,size, bold}) => {
+const Text: FC<props> = ({text,color,size, bold, lineHeight}) => {
   return (
      <p style={{
-         fontSize: size ,
+         fontSize: size || 12 ,
          color: color || 'black',
          fontWeight: bold ? '700' : '400',
-         margin: 0 
+         margin: 0,
+         lineHeight: `${lineHeight}px`,
+         fontFamily: 'Noir No1'
      }}>{text}</p>
   );
 }

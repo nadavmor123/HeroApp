@@ -1,135 +1,68 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import HeroDetails from './components/Hero/heroDetails';
-import { DataGrid } from '@mui/x-data-grid';
-import {Hero, HeroResponse} from './Types/data';
-import useFetch from './AppLogic/Hooks/useFetch';
+//import HeroDetails from './components/Hero/heroDetails';
+//import {Hero, HeroResponse} from './Types/data';
+import useFetch from './Helpers/Hooks/useFetch';
 import FlexBox from './UI/Layout/flexBox';
 import Card from './UI/Card/card';
 import Button from './UI/Button/button';
-import Image from './UI/Image/image';
 import {columns} from './gridConfig';
-import {dummyHeros} from './AppLogic/Mock/Heros';
-
-const apiUrl = `https://gateway.marvel.com:443/v1/public/characters?apikey=2ed8da3716ca94726cdfb4cf564ffe5c`;
+import { Excercise } from './Types/data';
+import { excersises } from './Helpers/Mock/Excersises';
+//import {dummyHeros} from './Helpers/Mock/Heros';
+import GridBox from './UI/GridBox/gridBox';
+import ExcerciseBox from './components/Excersise';
+const apiUrl = `http://dev.takeonestep.com/app/api/interview/exercises/`;
 
 function HerosApp() {
 
-  const {data,error,loading} = useFetch<HeroResponse>(apiUrl,{
-    count: 0,
-    limit: 0,
-    offset: 0,
-    results:[],
-    total: 0
-  })
+  const {data,error,loading} = useFetch(apiUrl)
 
-  const [heros, setHeros] = useState<Hero[]>([]);
-  const [selectedHero, setSelectedHero] = useState<Hero>();
-  const [filteredHeros, setFilteredHeros] = useState<Hero[]>([]);
+  const [selectedHero, setSelectedHero] = useState<any>();
+  const [filteredHeros, setFilteredHeros] = useState<any[]>([]);
   const [search, setSearch] = useState<string>('');
 
   const onSearchChange = (e:any) => {
-      setSelectedHero(undefined);
-      setSearch(e.target.value)
-      if(e.target.value === ''){
-        setFilteredHeros([])
-      }
+      // setSelectedHero(undefined);
+      // setSearch(e.target.value)
+      // if(e.target.value === ''){
+      //   setFilteredHeros([])
+      // }
   }
 
   const onSearchClick = () => {
-    let filteredHeros = heros.filter(hero=>{
-      return hero.name.includes(search)
-    });
-    setFilteredHeros(filteredHeros);
+    // let filteredHeros = heros.filter(hero=>{
+    //   return hero.name.includes(search)
+    // });
+    // setFilteredHeros(filteredHeros);
   }
 
-  const renderHeroList = () => {
-    if (loading) {
-      return (
-        <FlexBox alignItems='center' justifyContent='center'>
-          laoding...
-         </FlexBox>
-        )
-    } 
-    return (
-      <DataGrid
-        rows={filteredHeros.length > 0 ? filteredHeros : heros}
-        columns={columns}
-        pageSize={10}
-        rowsPerPageOptions={[10]}
-        checkboxSelection={false}
-        onRowClick={(params,e)=>{
-            setSelectedHero(params.row as Hero)
-        }}
-     />
-    )
-  }
+
 
   const initilizeData = () => {
-    if(data && data.results.length > 0){
-      setHeros(data.results.map((item:any) =>  {
-        return {
-          id: item.id,
-          name: item.name,
-          modified: item.modified,     
-          thumbnail: `${item.thumbnail.path}.${item.thumbnail.extension}`,
-          appearence: item.stories.items.map((story:any)=>{
-              return story.name;
-          })[0],
-          publisher:'Marvel'
-        } as Hero
-      }))
-    }else{
-      /* this was done in order to prevent the 
-      hustle of configuring all the marvel api and 
-      CORS demands - you welcome! */
-      setHeros(dummyHeros);
-    }
+    
   }
   
   useEffect(()=>{
-    initilizeData();
+    console.log('data',data);
   },[data])
 
   return (
     <div className="App">
-      <FlexBox background={'#E5E5E5'}  justifyContent={'center'} alignItems={'center'}>
-        <FlexBox width={200} paddingTop={40}>
-             <Image src={'/images/icon.png'}></Image>
-        </FlexBox>
-        </FlexBox>
-      <FlexBox justifyContent={'center'} background={'#E5E5E5'} height={window.innerHeight}>
-        <FlexBox width={1000} height={460}>
-          <Card header={
-            <FlexBox alignItems='center' justifyContent={'center'} background={'#EFEFF4'} height={100}>
-              <FlexBox width={480} direction='row' height={45}>
-                <FlexBox stratch>
-                  <input style={{width:'100%'}} value={search} onChange={onSearchChange}/>
-                </FlexBox>
-                <FlexBox width={50}>
-                  <Button label='GO!' background={'#4310AE'} onClick={onSearchClick}/>
-                </FlexBox>
-              </FlexBox>
-            </FlexBox>
-          } body={
-            selectedHero ?
-            <FlexBox direction={'row'} 
-            paddingTop={40} 
-            paddingRight={40} 
-            paddingBottom={40} 
-            paddingLeft={40} 
-            background={'white'}>
-               <FlexBox width={400}>
-                 <Image src={selectedHero.thumbnail}/>
-              </FlexBox>
-              <FlexBox stratch>
-                 <HeroDetails hero={selectedHero}></HeroDetails>
-              </FlexBox>
-            </FlexBox> :
-              renderHeroList() 
-          } />
-        </FlexBox>
+      <FlexBox width={'auto'} paddingLeft={40} paddingRight={40}>
+        <GridBox container>
+            {
+              data.map((excercise:Excercise, index:number) => {
+                return (
+                  <GridBox xs={12} sm={6} md={3}>
+                      <ExcerciseBox excercise={excercise} />
+                  </GridBox>
+                )
+              })
+            }
+        </GridBox>
       </FlexBox>
+       
     </div>
   );
 }
