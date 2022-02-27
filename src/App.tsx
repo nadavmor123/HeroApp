@@ -1,15 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
-//import HeroDetails from './components/Hero/heroDetails';
-//import {Hero, HeroResponse} from './Types/data';
 import useFetch from './Helpers/Hooks/useFetch';
 import FlexBox from './UI/Layout/flexBox';
-import Card from './UI/Card/card';
-import Button from './UI/Button/button';
-import {columns} from './gridConfig';
 import { Excercise } from './Types/data';
-import { excersises } from './Helpers/Mock/Excersises';
-//import {dummyHeros} from './Helpers/Mock/Heros';
 import GridBox from './UI/GridBox/gridBox';
 import ExcerciseBox from './components/Excersise';
 const apiUrl = `http://dev.takeonestep.com/app/api/interview/exercises/`;
@@ -18,41 +11,36 @@ function HerosApp() {
 
   const {data,error,loading} = useFetch(apiUrl)
 
-  const [selectedHero, setSelectedHero] = useState<any>();
-  const [filteredHeros, setFilteredHeros] = useState<any[]>([]);
-  const [search, setSearch] = useState<string>('');
+  const [list,setlist] = useState<Excercise[]>([]);
 
-  const onSearchChange = (e:any) => {
-      // setSelectedHero(undefined);
-      // setSearch(e.target.value)
-      // if(e.target.value === ''){
-      //   setFilteredHeros([])
-      // }
-  }
+  const inputEl = useRef(null);
 
-  const onSearchClick = () => {
-    // let filteredHeros = heros.filter(hero=>{
-    //   return hero.name.includes(search)
-    // });
-    // setFilteredHeros(filteredHeros);
-  }
-
-
-
-  const initilizeData = () => {
-    
+  const handleSearch = (e:any) => {
+    if(e?.target?.value){
+      let newList = list.filter(item=>{
+        return item.title.includes(e?.target?.value)
+      })
+      setlist(newList)
+    }else{
+      setlist(data)
+    }
   }
   
   useEffect(()=>{
-    console.log('data',data);
-  },[data])
+    if(!error && !loading){
+      setlist(data)
+    }
+  },[data,error,loading])
 
   return (
     <div className="App">
+      <FlexBox marginTop={20} marginBottom={20}>
+        <input placeholder='Search' ref={inputEl} type="text" onChange={handleSearch} />
+      </FlexBox>
       <FlexBox width={'auto'} paddingLeft={40} paddingRight={40}>
         <GridBox container>
             {
-              data.map((excercise:Excercise, index:number) => {
+              list.map((excercise:Excercise, index:number) => {
                 return (
                   <GridBox xs={12} sm={6} md={3}>
                       <ExcerciseBox excercise={excercise} />

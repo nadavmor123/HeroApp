@@ -18,6 +18,7 @@ interface props {
     paddingBottom?: number;
     shadow?:string;
     radius?:number;
+    clickable?: boolean;
 }
 
 const FlexBox: FC<props> = ({
@@ -36,7 +37,8 @@ const FlexBox: FC<props> = ({
     stratch, 
     shadow,
     radius,
-    background}) => {
+    background,
+    clickable}) => {
   return (
     <div style={{
         display:'flex',
@@ -54,7 +56,8 @@ const FlexBox: FC<props> = ({
         marginTop: `${marginTop}px` || 0,
         marginBottom: `${marginBottom}px` || 0,
         boxShadow: shadow,
-        borderRadius: `${radius}px`
+        borderRadius: `${radius}px`,
+        cursor: `${clickable ? 'pointer' : 'default'}`
     }}>
         {children}
     </div>

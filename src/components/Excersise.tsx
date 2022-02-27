@@ -24,11 +24,11 @@ const ExcerciseBox: FC<props> = ({excercise}) => {
         <FlexBox width={'auto'} 
             direction={'column'}
        >
-            <FlexBox width={230}>
+            <FlexBox width={230} clickable>
                 <Image src={'https://res.cloudinary.com/dujaj7bp2/video/upload/v1626623808/base_task_video/020_FLIP_all_four_opposition_reach_knoer2.jpg'}/>
             </FlexBox>
             <FlexBox height={50}>
-                <FlexBox width={200}>
+                <FlexBox width={200} clickable>
                     <Text text={excercise.title} size={18} bold></Text>
                 </FlexBox>
                </FlexBox>
